@@ -97,10 +97,10 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
 
   // Grab a cursor
   var todosCursor = todos.find();
-    // find({completed: true}) to fetch completed todos only
-    // or find({_id: new ObjectID('59282941bc58f57a766d0921')}) to get a specific todo
+  // find({completed: true}) to fetch completed todos only
+  // or find({_id: new ObjectID('59282941bc58f57a766d0921')}) to get a specific todo
 
-    todosCursor.toArray()
+  todosCursor.toArray()
     .then((documents) => { // returns a promise
         console.log('Todos :', JSON.stringify(documents, undefined, 2));
       },
@@ -125,7 +125,62 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
         console.log('Could not fetch documents : ', err);
       }
     );
-    // More cursor methods at http://mongodb.github.io/node-mongodb-native/2.2/api/Cursor.html
+  // More cursor methods at http://mongodb.github.io/node-mongodb-native/2.2/api/Cursor.html
+
+  // DELETE TODOS
+  // let insert some duplicates
+
+  try {
+    todos.insertMany([{
+        text: "Watch Game of Thrones",
+        completed: true,
+      },
+      {
+        text: "Watch Game of Thrones",
+        completed: true,
+      },
+      {
+        text: "Watch Game of Thrones",
+        completed: true,
+      }
+    ]);
+  } catch (e) {
+    print(e);
+  }
+
+  // Delete with deleteMany
+
+  todos.deleteMany({
+    text: "Watch Game of Thrones"
+  }).then((res) => {
+
+    console.log(`${res.result.n} todos duplicates have been deleted! `);
+
+  });
+
+  // Delete with deleteOne
+
+  todos.deleteOne({
+    text: "Watch Game of Thrones"
+  }).then((res) => {
+
+    if (res.result.n === 0) {
+      return console.log(`Todo not found.`);
+    }
+
+    console.log(`Todo has been deleted.`);
+
+  });
+
+  // Delete with findOneAndDelete, returns items deleted
+  todos.findOneAndDelete({
+    text: "Walk the dog"
+  }).then((res) => {
+
+    console.log(`Following Todo has been deleted :
+       \n text : ${res.value.text} \n completed : ${res.value.completed} `);
+
+  });
 
 
 
