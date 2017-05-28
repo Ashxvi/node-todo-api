@@ -128,8 +128,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
   // More cursor methods at http://mongodb.github.io/node-mongodb-native/2.2/api/Cursor.html
 
   // DELETE TODOS
-  // let insert some duplicates
 
+  // let's insert some duplicates
   try {
     todos.insertMany([{
         text: "Watch Game of Thrones",
@@ -156,6 +156,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
 
     console.log(`${res.result.n} todos duplicates have been deleted! `);
 
+  }).catch((err) => {
+    console.log('Something went wrong : ', err);
   });
 
   // Delete with deleteOne
@@ -170,6 +172,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
 
     console.log(`Todo has been deleted.`);
 
+  }).catch((err) => {
+    console.log('Something went wrong : ', err);
   });
 
   // Delete with findOneAndDelete, returns items deleted
@@ -180,13 +184,44 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => { //Mongo 
     console.log(`Following Todo has been deleted :
        \n text : ${res.value.text} \n completed : ${res.value.completed} `);
 
+  }).catch((err) => {
+    console.log('Something went wrong : ', err);
   });
 
+  // UPDATE TODOS
+  // with findOneAndUpdate
+  todos.findOneAndUpdate({
+    text: 'Wash my clothes' // Todo to update, you can put the ObjectID
+  }, {
+    $set: {
+      completed: true // toggle Todo completion to true
+    }
+  }, {
+    returnOriginal: false // We want the updated item
+  }).then((res) => {
 
+    console.log(`Following Todo has been updated :
+       \n text : ${res.value.text} \n completed : ${res.value.completed} `);
 
-  // This function iterates over a query to modify the location of people with age < 20
+  }).catch((err) => {
+    console.log('Something went wrong : ', err);
+  });
 
+  /*// Let's iterate over users to increment their age
 
+  usersCursor.map((doc) => {
+
+    doc.update({
+      _id: doc._id
+    }, {
+      $inc : {
+        age: 1
+      }
+    });
+  }, (err) => {
+    console.log('Something went wrong : ', err);
+  });
+   */
 
 
 
